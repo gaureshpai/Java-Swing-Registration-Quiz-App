@@ -12,6 +12,7 @@ public class ForgotPasswordApp extends JFrame implements ActionListener {
     private User user;
 
     public ForgotPasswordApp(User user) {
+        // Constructor to initialize the ForgotPasswordApp with user information
         this.user = user;
 
         setTitle("Forgot Password");
@@ -46,11 +47,12 @@ public class ForgotPasswordApp extends JFrame implements ActionListener {
     }
 
     private void retrievePassword() {
+        // Retrieve the user's password based on the entered security answer
         String answer = securityAnswerField.getText();
 
         if (answer.equals(user.securityAnswer)) {
             JOptionPane.showMessageDialog(this, "Your password is: " + new String(user.password));
-            dispose();
+            dispose(); // Close the window after retrieving the password
         } else {
             JOptionPane.showMessageDialog(this, "Incorrect answer to security question.");
         }
