@@ -1,11 +1,16 @@
+# Ignore class files
+*.class
+
+# Ignore specific class files
 /ForgotPasswordApp.class
 /LoginApp$1.class
 /LoginApp$LoginWorker.class
 /LoginApp.class
-/OnlineTest.class
 /User.class
 /TestResult.class
 /RegisterApp.class
 /LoginApp$RegistrationWindow.class
 /UserDatabase.class
-.dist
+
+# Ignore .dist directory
+.dist/
