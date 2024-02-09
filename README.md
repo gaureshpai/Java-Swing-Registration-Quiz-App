@@ -1,7 +1,5 @@
 # Java Swing Registration App
 
-🎨 ![Java Swing Registration App](registration_app_screenshot.png)
-
 This Java Swing application provides a sleek and user-friendly interface for user registration, login, and an online quiz. It features a modern design with intuitive controls and seamless functionality.
 
 ## Features
