@@ -246,7 +246,7 @@ public class OnlineTest extends JFrame implements ActionListener {
             BufferedWriter bw = new BufferedWriter(writer);
             PrintWriter pw = new PrintWriter(bw);
 
-            pw.println(name + ": Score=" + score);
+            pw.println("Name: " + name + " | Quiz Score: " + score);
             pw.flush();
             pw.close();
         } catch (IOException e) {
