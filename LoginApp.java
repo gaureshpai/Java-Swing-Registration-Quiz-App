@@ -1,6 +1,6 @@
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 import java.util.Arrays;
 
 public class LoginApp extends JFrame implements ActionListener {
@@ -9,24 +9,21 @@ public class LoginApp extends JFrame implements ActionListener {
     private static final String PASSWORD_LABEL_TEXT = "Password:";
     private static final String TOP_BAR_TEXT = "Login to Take the Quiz";
 
-    JLabel usernameLabel, passwordLabel, topBarLabel, securityQuestionLabel, securityAnswerLabel;
-    JTextField usernameField, securityAnswerField;
+    JLabel usernameLabel, passwordLabel, topBarLabel;
+    JTextField usernameField;
     JPasswordField passwordField;
     JCheckBox showPasswordCheckbox;
-    JButton loginButton, forgotPasswordButton;
+    JButton loginButton, forgotPasswordButton, registerButton;
 
-    User[] users = {
-        new User("user1", "password1".toCharArray(), "What is your pet's name?", "Fluffy"),
-        new User("a", "b".toCharArray(), "Where were you born?", "CityX"),
-        new User("user2", "password2".toCharArray(), "What is your favorite color?", "Blue")
-    };
+    User[] users;
 
     // Forgot Password components
     private ForgotPasswordApp forgotPasswordApp;
 
-    public LoginApp() {
+    public LoginApp(User[] users) {
         setTitle("Login");
         setLayout(new BorderLayout(20, 20));
+        this.users = users;
 
         // Top bar with title
         topBarLabel = new JLabel(TOP_BAR_TEXT, SwingConstants.CENTER);
@@ -36,7 +33,7 @@ public class LoginApp extends JFrame implements ActionListener {
         topBarLabel.setOpaque(true);
         add(topBarLabel, BorderLayout.NORTH);
 
-        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10)); // Increased to accommodate the register button
         inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         inputPanel.add(new JLabel(USERNAME_LABEL_TEXT));
@@ -56,6 +53,12 @@ public class LoginApp extends JFrame implements ActionListener {
         forgotPasswordButton.addActionListener(this);
         inputPanel.add(new JPanel());
         inputPanel.add(forgotPasswordButton);
+
+        // Register button
+        registerButton = new JButton("Register");
+        registerButton.addActionListener(this);
+        inputPanel.add(new JPanel());
+        inputPanel.add(registerButton);
 
         add(inputPanel, BorderLayout.CENTER);
 
@@ -87,11 +90,14 @@ public class LoginApp extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
             loginButton.setEnabled(false);
-            new LoginWorker().execute();
+            // Pass the username to LoginWorker
+            new LoginWorker(usernameField.getText()).execute();
         } else if (e.getSource() == showPasswordCheckbox) {
             passwordField.setEchoChar(showPasswordCheckbox.isSelected() ? '\0' : '*');
         } else if (e.getSource() == forgotPasswordButton) {
             handleForgotPassword();
+        } else if (e.getSource() == registerButton) {
+            handleRegistration();
         }
     }
 
@@ -105,15 +111,24 @@ public class LoginApp extends JFrame implements ActionListener {
             if (forgotPasswordApp != null) {
                 forgotPasswordApp.dispose();
             }
-            forgotPasswordApp = new ForgotPasswordApp(user);
+            forgotPasswordApp = new ForgotPasswordApp(users);
         } else {
             showErrorMessage("Username not found.");
         }
     }
 
+    private void handleRegistration() {
+        // Open a registration window
+        RegistrationWindow registrationWindow = new RegistrationWindow();
+        registrationWindow.setVisible(true);
+    }
+
     private User findUserByUsername(String username) {
+        if (users == null || users.length == 0) {
+            return null;
+        }
         for (User u : users) {
-            if (u.username.equals(username)) {
+            if (u.getUsername().equals(username)) {
                 return u;
             }
         }
@@ -121,6 +136,12 @@ public class LoginApp extends JFrame implements ActionListener {
     }
 
     private class LoginWorker extends SwingWorker<Boolean, Void> {
+        private String username; // Store the username
+
+        // Constructor to receive the username
+        public LoginWorker(String username) {
+            this.username = username;
+        }
 
         @Override
         protected Boolean doInBackground() throws Exception {
@@ -128,7 +149,7 @@ public class LoginApp extends JFrame implements ActionListener {
             char[] passwordChars = passwordField.getPassword();
 
             for (User user : users) {
-                if (user.username.equals(username) && Arrays.equals(user.password, passwordChars)) {
+                if (user.getUsername().equals(username) && Arrays.equals(user.getPassword(), passwordChars)) {
                     return true; // Successful login
                 }
             }
@@ -142,9 +163,12 @@ public class LoginApp extends JFrame implements ActionListener {
                 boolean loginSuccess = get();
 
                 if (loginSuccess) {
-                    dispose();
-                    OnlineTest testApp = new OnlineTest("Online Test of Java for " + usernameField.getText());
-                    testApp.setVisible(true);
+                    dispose(); // Close the login window
+                    // Open the OnlineTest frame
+                    SwingUtilities.invokeLater(() -> {
+                        OnlineTest testApp = new OnlineTest("Online Test of Java for " + username);
+                        testApp.setVisible(true);
+                    });
                 } else {
                     showErrorMessage("Invalid username or password");
                     Arrays.fill(passwordField.getPassword(), ' ');
@@ -157,6 +181,7 @@ public class LoginApp extends JFrame implements ActionListener {
                 loginButton.setEnabled(true);
             }
         }
+
     }
 
     private void showErrorMessage(String message) {
@@ -166,22 +191,78 @@ public class LoginApp extends JFrame implements ActionListener {
         topBarLabel.setOpaque(true);
 
         // Reset the error message after a delay
-        Timer timer = new Timer(3000, new ActionListener() {
+        javax.swing.Timer timer = new javax.swing.Timer(3000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 topBarLabel.setText(TOP_BAR_TEXT);
                 topBarLabel.setBackground(new Color(102, 102, 102));
                 topBarLabel.setOpaque(true);
-                ((Timer) e.getSource()).stop();
+                ((javax.swing.Timer) e.getSource()).stop();
             }
         });
         timer.setRepeats(false);
         timer.start();
     }
 
+    private class RegistrationWindow extends JFrame implements ActionListener {
+
+        JTextField usernameField, securityQuestionField, securityAnswerField;
+        JPasswordField passwordField;
+        JButton registerUserButton;
+
+        public RegistrationWindow() {
+            setTitle("Registration");
+            setLayout(new GridLayout(5, 2, 10, 10));
+
+            add(new JLabel("Username:"));
+            usernameField = new JTextField();
+            add(usernameField);
+
+            add(new JLabel("Password:"));
+            passwordField = new JPasswordField();
+            add(passwordField);
+
+            add(new JLabel("Security Question:"));
+            securityQuestionField = new JTextField();
+            add(securityQuestionField);
+
+            add(new JLabel("Security Answer:"));
+            securityAnswerField = new JTextField();
+            add(securityAnswerField);
+
+            registerUserButton = new JButton("Register");
+            registerUserButton.addActionListener(this);
+            add(registerUserButton);
+
+            setSize(300, 200);
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == registerUserButton) {
+                // Create a new user and add it to the list
+                String username = usernameField.getText();
+                char[] password = passwordField.getPassword();
+                String securityQuestion = securityQuestionField.getText();
+                String securityAnswer = securityAnswerField.getText();
+
+                User newUser = new User(username, password, securityQuestion, securityAnswer);
+                users = Arrays.copyOf(users, users.length + 1);
+                users[users.length - 1] = newUser;
+
+                // Save the updated user list
+                // UserDatabase.saveUsers(users);
+
+                // Close the registration window
+                dispose();
+            }
+        }
+    }
+
     public static void main(String s[]) {
-        SwingUtilities.invokeLater(() -> {
-            new LoginApp().setVisible(true);
-        });
+        // Load users from the database
+        User[] users = UserDatabase.loadUsers();
+        new LoginApp(users).setVisible(true);
     }
 }

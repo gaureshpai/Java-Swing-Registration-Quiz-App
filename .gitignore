@@ -4,3 +4,8 @@
 /LoginApp.class
 /OnlineTest.class
 /User.class
+/TestResult.class
+/RegisterApp.class
+/LoginApp$RegistrationWindow.class
+/UserDatabase.class
+.dist
