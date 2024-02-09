@@ -253,7 +253,7 @@ public class LoginApp extends JFrame implements ActionListener {
 
                 // Save the updated user list
                 // UserDatabase.saveUsers(users);
-
+                UserDatabase.saveUsers(users);
                 // Close the registration window
                 dispose();
             }
