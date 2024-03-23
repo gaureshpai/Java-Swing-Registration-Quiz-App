@@ -10,8 +10,7 @@ public class User {
         this.securityQuestion = securityQuestion;
         this.securityAnswer = securityAnswer;
     }
-
-    // Getter methods for security question and answer
+    
     public String getSecurityQuestion() {
         return securityQuestion;
     }

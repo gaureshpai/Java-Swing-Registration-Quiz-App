@@ -19,10 +19,8 @@ public class UserDatabase {
                 }
             }
         } catch (FileNotFoundException e) {
-            // Handle file not found error
             System.err.println("Error: users.txt file not found.");
         } catch (IOException e) {
-            // Handle other I/O errors
             e.printStackTrace();
             System.err.println("Error loading users: " + e.getMessage());
         }
@@ -34,7 +32,7 @@ public class UserDatabase {
             for (User user : users) {
                 writer.println(user.getUsername() + "," + String.valueOf(user.getPassword()) + "," + user.getSecurityQuestion() + "," + user.getSecurityAnswer());
             }
-            writer.flush(); // Ensure data is flushed to the file
+            writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error saving users: " + e.getMessage());

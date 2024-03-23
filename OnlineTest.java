@@ -4,7 +4,6 @@ import java.awt.event.*;
 import java.io.*;
 
 public class OnlineTest extends JFrame implements ActionListener {
-    // Instance variables
     JLabel questionLabel;
     JRadioButton options[] = new JRadioButton[4];
     JButton nextButton, bookmarkButton, prevButton, resultButton;
@@ -13,11 +12,9 @@ public class OnlineTest extends JFrame implements ActionListener {
     int bookmarks[] = new int[10];
     String username;
 
-    // Constructor
     public OnlineTest(String username) {
         this.username = username;
 
-        // Initialize components
         questionLabel = new JLabel();
         buttonGroup = new ButtonGroup();
         for (int i = 0; i < 4; i++) {
@@ -29,13 +26,11 @@ public class OnlineTest extends JFrame implements ActionListener {
         prevButton = new JButton("Previous");
         resultButton = new JButton("Result");
 
-        // Add action listeners
         nextButton.addActionListener(this);
         bookmarkButton.addActionListener(this);
         prevButton.addActionListener(this);
         resultButton.addActionListener(this);
 
-        // Add components to the frame
         add(questionLabel);
         for (int i = 0; i < 4; i++) {
             add(options[i]);
@@ -45,11 +40,8 @@ public class OnlineTest extends JFrame implements ActionListener {
         add(bookmarkButton);
         add(resultButton);
 
-        // Set layout
         setLayout(null);
 
-        // Set bounds for components
-        // (Adjust these values as needed)
         questionLabel.setBounds(30, 40, 450, 20);
         for (int i = 0; i < 4; i++) {
             options[i].setBounds(50, 100 + i * 30, 200, 20);
@@ -59,17 +51,14 @@ public class OnlineTest extends JFrame implements ActionListener {
         bookmarkButton.setBounds(320, 280, 100, 30);
         resultButton.setBounds(480, 20, 100, 30);
 
-        // Set frame properties
         setSize(600, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
-        // Load questions
         setQuestions();
     }
 
-    // ActionListener implementation
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == nextButton) {
             if (checkAnswer()) {
@@ -118,8 +107,7 @@ public class OnlineTest extends JFrame implements ActionListener {
             if (e.getSource() == resultButton) {
                 if (checkAnswer())
                     count++;
-                
-                // Save the result with the username to CSV file
+
                 saveResultToCSV(username, count); 
                 
                 JOptionPane.showMessageDialog(this, "Correct answers: " + count + "\nThank you for taking the quiz!");
@@ -128,7 +116,6 @@ public class OnlineTest extends JFrame implements ActionListener {
         }
     }
 
-    // Method to set questions
     void setQuestions() {
         options[0].setSelected(true);
         
@@ -208,7 +195,6 @@ public class OnlineTest extends JFrame implements ActionListener {
         questionLabel.setBounds(30, 40, 450, 20);
     }
 
-    // Method to check answer
     boolean checkAnswer() {
         switch (current) {
             case 0:
@@ -236,7 +222,6 @@ public class OnlineTest extends JFrame implements ActionListener {
         }
     }
 
-    // Method to save result to CSV file
     void saveResultToCSV(String name, int score) {
         String csvFile = "result.csv";
         File file = new File(csvFile);
@@ -252,11 +237,5 @@ public class OnlineTest extends JFrame implements ActionListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        // Fetch the username passed from LoginApp
-        String username = args.length > 0 ? args[0] : "Default"; // Provide a default username if not passed
-        new OnlineTest(username);
     }
 }
