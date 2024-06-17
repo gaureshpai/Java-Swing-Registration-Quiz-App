@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "java" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "maven"
+    directory: "/" # Location of the pom.xml file
     schedule:
       interval: "weekly"
